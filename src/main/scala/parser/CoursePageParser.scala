@@ -30,9 +30,10 @@ class CoursePageParser(semester: String) {
 
     val courseMatches = CoursePattern.findAllIn(subjectPage)
 
+    val courseBuilder = CourseBuilder.getInstance()
     courseMatches.map { courseMatch =>
       val courseDetailMatches = CourseDetail.CourseDetailsPattern.findAllIn(courseMatch).toSeq
-      new CourseBuilder(courseDetailMatches).build()
+      courseBuilder.build(courseDetailMatches)
     }.toSeq
   }
 

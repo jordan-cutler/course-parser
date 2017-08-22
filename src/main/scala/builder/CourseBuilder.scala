@@ -5,19 +5,18 @@ import java.util.Calendar
 import model.Course
 import util.matching._
 
-class CourseBuilder(courseDetailMatches: Seq[String]) {
+class CourseBuilder() {
 
-  def build(): Course = {
-    createCourse(getCourseDetailToCourseDetailStringMap)
-  }
+  def build(courseDetailMatches: Seq[String]): Course = {
+    val courseDetailToCourseDetailStringMap: Map[CourseDetail, String] =
+      courseDetailMatches.zipWithIndex.flatMap {
+        case (courseDetailMatchedString, indexOfMatchedString) =>
+          CourseDetail.IndexToCourseDetailMap.get(indexOfMatchedString).map { courseDetail =>
+            Predef.ArrowAssoc(courseDetail) -> courseDetailMatchedString
+          }
+      }.toMap
 
-  private def getCourseDetailToCourseDetailStringMap: Map[CourseDetail, String] = {
-    courseDetailMatches.zipWithIndex.flatMap {
-      case (courseDetailMatchedString, indexOfMatchedString) =>
-        CourseDetail.IndexToCourseDetailMap.get(indexOfMatchedString).map { (courseDetail: CourseDetail) =>
-          Predef.ArrowAssoc(courseDetail) -> courseDetailMatchedString
-        }
-    }.toMap
+    createCourse(courseDetailToCourseDetailStringMap)
   }
 
   // Given the array of indices to check for course details needed and the array of course details,
@@ -57,13 +56,21 @@ class CourseBuilder(courseDetailMatches: Seq[String]) {
       )
       case CourseTime.TimeUnlistedPattern(_) => (None, None, None)
     }
-    val courseTime = startTimeOpt.map { startTime =>
-      endTimeOpt.map { endTime =>
-        daysOpt.map { days =>
-          CourseTime(startTime, endTime, days)
-        }
+    val courseTime =
+      for {
+        startTime <- startTimeOpt
+        endTime <- endTimeOpt
+        days <- daysOpt
+      } yield {
+        CourseTime(startTime, endTime, days)
       }
-    }
+    //      startTimeOpt.map { startTime =>
+    //      endTimeOpt.map { endTime =>
+    //        daysOpt.map { days =>
+    //          CourseTime(startTime, endTime, days)
+    //        }
+    //      }
+    //    }
     new Course(courseRegistrationNumber, courseNumber, courseTitle, credits, instructor, courseTime)
   }
 
@@ -80,5 +87,13 @@ class CourseBuilder(courseDetailMatches: Seq[String]) {
     cal.set(Calendar.HOUR, hour)
     cal.set(Calendar.MINUTE, minute)
     cal
+  }
+}
+
+object CourseBuilder {
+  private val courseBuilder = new CourseBuilder()
+  
+  def getInstance(): CourseBuilder = {
+    courseBuilder
   }
 }
