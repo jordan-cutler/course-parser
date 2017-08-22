@@ -7,19 +7,19 @@ sealed trait CourseDetail {
   val index: Int
 }
 
-case object CourseCredits extends CourseDetail {
+case object CourseCreditsDetail extends CourseDetail {
   val index = 3
   val Pattern = GeneralPatterns.BetweenTdsPattern
 }
 
-case object CourseNumber extends CourseDetail {
+case object CourseNumberDetail extends CourseDetail {
   val index = 1
   val NonCrossListedPattern = GeneralPatterns.BetweenTdsPattern
   // <td>AAS 066-010<p class='xlist'><strong>Cross listed:</strong></p><p class='xlist'>THTR 066-010</p></td>
   val CrossListedPattern = "<td>(?s)(.*?)<p class(?s)(.*?)</td>".r
 }
 
-case object CourseTime extends CourseDetail {
+case object CourseTimeDetail extends CourseDetail {
   val index = 7
   // <td class='nowrap'><p>11:10am - 12:25pm (MF)</p>
   // </td>
@@ -29,18 +29,18 @@ case object CourseTime extends CourseDetail {
   val TimeUnlistedPattern = "<td(?s)(.*?)</td>".r
 }
 
-case object CourseTitle extends CourseDetail {
+case object CourseTitleDetail extends CourseDetail {
   val index = 2
   val Pattern = GeneralPatterns.BetweenTdsPattern
 }
 
-case object Instructor extends CourseDetail {
+case object InstructorDetail extends CourseDetail {
   val index = 4
   // <td><p>Susan Kart</p></td>
   val Pattern = "<td><p>(?s)(.*?)</p></td>".r
 }
 
-case object RegistrationNumber extends CourseDetail {
+case object RegistrationNumberDetail extends CourseDetail {
   val index = 0
   // <td>43508<a id='43508'></a></td>
   val Pattern = "<td>(\\d{5})<a id='\\d{5}'></a></td>".r
@@ -52,20 +52,20 @@ object CourseDetail {
   val CourseDetailsPattern = "<td(?s)(.*?)</td>".r
 
   val CourseDetailToIndexMap = Map(
-    CourseCredits -> CourseCredits.index,
-    CourseNumber -> CourseNumber.index,
-    CourseTime -> CourseTime.index,
-    CourseTitle -> CourseTitle.index,
-    Instructor -> Instructor.index,
-    RegistrationNumber -> RegistrationNumber.index
+    CourseCreditsDetail -> CourseCreditsDetail.index,
+    CourseNumberDetail -> CourseNumberDetail.index,
+    CourseTimeDetail -> CourseTimeDetail.index,
+    CourseTitleDetail -> CourseTitleDetail.index,
+    InstructorDetail -> InstructorDetail.index,
+    RegistrationNumberDetail -> RegistrationNumberDetail.index
   )
 
   val IndexToCourseDetailMap = Map(
-    CourseCredits.index -> CourseCredits,
-    CourseNumber.index -> CourseNumber,
-    CourseTime.index -> CourseTime,
-    CourseTitle.index -> CourseTitle,
-    Instructor.index -> Instructor,
-    RegistrationNumber.index -> RegistrationNumber
+    CourseCreditsDetail.index -> CourseCreditsDetail,
+    CourseNumberDetail.index -> CourseNumberDetail,
+    CourseTimeDetail.index -> CourseTimeDetail,
+    CourseTitleDetail.index -> CourseTitleDetail,
+    InstructorDetail.index -> InstructorDetail,
+    RegistrationNumberDetail.index -> RegistrationNumberDetail
   )
 }
