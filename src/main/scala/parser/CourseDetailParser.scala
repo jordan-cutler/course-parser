@@ -69,29 +69,12 @@ class CourseDetailParser(courseMatch: String) {
 
     Some(
       timesMatches.map {
-        case CourseTimeDetail.TimeListedPattern(start, end, daysListed) => new CourseTime(
-          start,
-          end,
-          daysListed.toCharArray.flatMap(Day.fromAbbreviation)
+        case CourseTimeDetail.TimeListedPattern(start, end, daysListed) => CourseTime(
+          startTime = start,
+          endTime = end,
+          daysOffered = daysListed.toCharArray.flatMap(Day.fromAbbreviation)
         )
       }.toList
     )
-  }
-}
-
-object CourseDetailParser {
-  private[parser] def stringToCalendarObject(str: String): Calendar = {
-    val patt = "(\\d{1,2}):(\\d{2})([a-zA-Z]{2})".r
-    val cal = Calendar.getInstance()
-    var (hour, minute) = str match {
-      case patt(hr, min, amPm) =>
-        if (amPm equalsIgnoreCase "pm") cal.set(Calendar.AM_PM, 1)
-        else cal.set(Calendar.AM_PM, 0)
-        (Integer parseInt hr, Integer parseInt min)
-    }
-    if (hour == 12) hour = 0
-    cal.set(Calendar.HOUR, hour)
-    cal.set(Calendar.MINUTE, minute)
-    cal
   }
 }

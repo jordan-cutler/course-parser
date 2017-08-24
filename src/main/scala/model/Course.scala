@@ -1,7 +1,7 @@
 package model
 
 class Course(crn: CourseRegistrationNumber, num: CourseNumber, title: CourseTitle, credits: CourseCredits,
-             instructor: Instructor, courseTimesOpt: Option[Seq[CourseTime]], subject: CourseSubject, section: CourseSection) {
+             instructor: Instructor, subject: CourseSubject, section: CourseSection, courseTimesOpt: Option[Seq[CourseTime]]) {
 
   import Course._
 

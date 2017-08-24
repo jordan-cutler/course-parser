@@ -15,7 +15,7 @@ private[builder] class CourseBuilder() {
     val subject = courseDetailParser.getCourseSubject
     val section = courseDetailParser.getCourseSection
 
-    new Course(courseRegistrationNumber, courseNumber, courseTitle, credits, instructor, courseTime, subject, section)
+    new Course(courseRegistrationNumber, courseNumber, courseTitle, credits, instructor, subject, section, courseTime)
   }
 }
 
