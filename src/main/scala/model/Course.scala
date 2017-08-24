@@ -8,15 +8,16 @@ class Course(crn: CourseRegistrationNumber, num: CourseNumber, title: CourseTitl
   override def toString: String = {
     val start =
       s"CRN: $crn\n" +
-        s"Num: $num\n" +
+        s"Course: $subject $num\n" +
+        s"Section: $section\n" +
         s"Title: $title\n" +
         s"Credits: $credits\n" +
-        s"model.Instructor: $instructor\n"
+        s"Instructor: $instructor\n"
 
     start + courseTime.map { courseTime =>
       "Start Time: " + courseTime.startTime + "\n" +
         "End Time: " + courseTime.endTime + "\n" +
-        "Days: " + courseTime.daysOffered + "\n"
+        "Days: " + courseTime.daysOffered.mkString(", ") + "\n"
     }.getOrElse(NoTimesString)
   }
 }

@@ -1,3 +1,7 @@
 package model
 
-case class CourseRegistrationNumber(courseRegistrationNumber: String)
+case class CourseRegistrationNumber(courseRegistrationNumber: String) {
+  override def toString: String = {
+    courseRegistrationNumber
+  }
+}

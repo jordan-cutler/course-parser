@@ -1,3 +1,7 @@
 package model
 
-case class CourseSubject(subject: String)
+case class CourseSubject(subject: String) {
+  override def toString: String = {
+    subject
+  }
+}
