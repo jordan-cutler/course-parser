@@ -2,7 +2,7 @@ package model
 
 import java.util.Calendar
 
-case class CourseTime(startTime: String, endTime: String, days: Seq[Day])
+case class CourseTime(startTime: String, endTime: String, daysOffered: Seq[Day])
 
 object CourseTime {
   def apply(startTime: Calendar, endTime: Calendar, days: Seq[Day]): CourseTime = {

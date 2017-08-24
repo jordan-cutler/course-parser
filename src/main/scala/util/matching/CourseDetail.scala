@@ -1,7 +1,5 @@
 package util.matching
 
-import util.matching.CourseDetail._
-
 // courseDetails contains all the possible info for the given course we are looking at (all the td elements)
 sealed trait CourseDetail {
   val index: Int
@@ -14,9 +12,20 @@ case object CourseCreditsDetail extends CourseDetail {
 
 case object CourseNumberDetail extends CourseDetail {
   val index = 1
-  val NonCrossListedPattern = GeneralPatterns.BetweenTdsPattern
+  val Pattern = "<td>([A-Z]+) (\\d{3})-([A-Z0-9]{3})(?s)(.*?)</td>".r
+  //val NonCrossListedPattern = "<td>([A-Z]+) (\\d{3})-([A-Z0-9]{3})</td>".r
   // <td>AAS 066-010<p class='xlist'><strong>Cross listed:</strong></p><p class='xlist'>THTR 066-010</p></td>
-  val CrossListedPattern = "<td>(?s)(.*?)<p class(?s)(.*?)</td>".r
+  //val CrossListedPattern = "<td>([A-Z]+) (\\d{3})-([A-Z0-9]{3})<p class(?s)(.*?)</td>".r
+}
+
+case object CourseSubjectDetail extends CourseDetail {
+  val index = 1
+  val Pattern = "<td>([A-Z]+) (\\d{3})-([A-Z0-9]{3})(?s)(.*?)</td>".r
+}
+
+case object CourseSectionDetail extends CourseDetail {
+  val index = 1
+  val Pattern = "<td>([A-Z]+) (\\d{3})-([A-Z0-9]{3})(?s)(.*?)</td>".r
 }
 
 case object CourseTimeDetail extends CourseDetail {

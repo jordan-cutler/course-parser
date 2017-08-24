@@ -25,11 +25,12 @@ case object Friday extends Day {
 }
 
 object Day {
-  def fromChar(abbreviation: Char): Option[Day] = abbreviation match {
+  def fromAbbreviation(abbreviation: Char): Option[Day] = abbreviation match {
     case Monday.abbreviation => Some(Monday)
     case Tuesday.abbreviation => Some(Tuesday)
     case Wednesday.abbreviation => Some(Wednesday)
     case Thursday.abbreviation => Some(Thursday)
     case Friday.abbreviation => Some(Friday)
+    case _ => None
   }
 }

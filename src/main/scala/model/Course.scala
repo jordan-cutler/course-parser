@@ -1,7 +1,7 @@
 package model
 
 class Course(crn: CourseRegistrationNumber, num: CourseNumber, title: CourseTitle, credits: CourseCredits,
-             instructor: Instructor, courseTime: Option[CourseTime]) {
+             instructor: Instructor, courseTime: Option[CourseTime], subject: CourseSubject, section: CourseSection) {
 
   import Course._
 
@@ -16,7 +16,7 @@ class Course(crn: CourseRegistrationNumber, num: CourseNumber, title: CourseTitl
     start + courseTime.map { courseTime =>
       "Start Time: " + courseTime.startTime + "\n" +
         "End Time: " + courseTime.endTime + "\n" +
-        "Days: " + courseTime.days + "\n"
+        "Days: " + courseTime.daysOffered + "\n"
     }.getOrElse(NoTimesString)
   }
 }

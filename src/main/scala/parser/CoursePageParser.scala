@@ -1,54 +1,34 @@
 package parser
 
 import builder.CourseBuilder
-import model.Course
-import util.matching.CourseDetail
+import model.{Course, CourseSubject}
+import util.CourseSitePostRequestUtil._
 
-import scalaj.http.{Http, HttpOptions, HttpResponse}
-
-class CoursePageParser(semester: String) {
+class CoursePageParser {
 
   import CoursePageParser._
 
-  val subjects: Seq[String] = getSubjects
+  val courseSubjectParser = new CourseSubjectParser
 
-  def getCoursesBySemester(): Seq[Course] = {
-    subjects.par.flatMap(getCoursesBySubject).toList
+  def getCoursesBySemester(semester: String): Seq[Course] = {
+    val subjects = courseSubjectParser.getSubjectsBySemester(semester)
+    subjects.par.flatMap { subject =>
+      getCoursesBySubject(semester, subject)
+    }.toList
   }
 
-  private def getSubjects: Seq[String] = {
-    val pageWithSubjectsSection = postRequestWrapper().body
-    val subjectsSection = SubjectSectionPattern.findFirstIn(pageWithSubjectsSection).mkString
-    val subjects = SingleSubjectPattern.findAllIn(subjectsSection)
-    subjects.map {
-      case SingleSubjectPattern(subject, _) => subject
-    }.toSeq
-  }
+  private def getCoursesBySubject(semester: String, subject: CourseSubject): Seq[Course] = {
+    val coursePageForGivenSubjectAndSemester = courseSitePostRequest(semester, subject.subject).body
 
-  private def getCoursesBySubject(subject: String): Seq[Course] = {
-    val subjectPage = postRequestWrapper(subject).body
-
-    val courseMatches = CoursePattern.findAllIn(subjectPage)
+    val courseMatches = CoursePattern.findAllIn(coursePageForGivenSubjectAndSemester)
 
     val courseBuilder = CourseBuilder.getInstance()
     courseMatches.map { courseMatch =>
-      val courseDetailMatches = CourseDetail.CourseDetailsPattern.findAllIn(courseMatch).toSeq
-      courseBuilder.build(courseDetailMatches)
+      courseBuilder.build(new CourseDetailParser(courseMatch))
     }.toSeq
-  }
-
-  private def postRequestWrapper(subject: String = "", title: String = ""): HttpResponse[String] = {
-    Http(RegistrarUrl)
-      .postForm(Array(("term", semester), ("title", title), ("subject", subject)))
-      .header("Content-Type", "application/json")
-      .header("Charset", "UTF-8")
-      .option(HttpOptions.readTimeout(20000)).asString
   }
 }
 
 object CoursePageParser {
   val CoursePattern = "<tr class=''>(?s)(.*?)</tr>".r
-  val RegistrarUrl = "http://webapps.lehigh.edu/registrar/schedule/?"
-  val SubjectSectionPattern = "<select id='subject' name='subject'>(?s)(.*)</select>".r
-  val SingleSubjectPattern = "<option value='([A-Z_]+)'>([ A-Za-z&\\',]+)</option>".r
 }
