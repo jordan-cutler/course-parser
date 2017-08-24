@@ -1,7 +1,7 @@
 package model
 
 class Course(crn: CourseRegistrationNumber, num: CourseNumber, title: CourseTitle, credits: CourseCredits,
-             instructor: Instructor, courseTime: Option[CourseTime], subject: CourseSubject, section: CourseSection) {
+             instructor: Instructor, courseTimesOpt: Option[Seq[CourseTime]], subject: CourseSubject, section: CourseSection) {
 
   import Course._
 
@@ -14,11 +14,14 @@ class Course(crn: CourseRegistrationNumber, num: CourseNumber, title: CourseTitl
         s"Credits: $credits\n" +
         s"Instructor: $instructor\n"
 
-    start + courseTime.map { courseTime =>
-      "Start Time: " + courseTime.startTime + "\n" +
-        "End Time: " + courseTime.endTime + "\n" +
-        "Days: " + courseTime.daysOffered.mkString(", ") + "\n"
-    }.getOrElse(NoTimesString)
+    val timeInfo = "Meeting Times: \n" +
+      courseTimesOpt.map { courseTimes =>
+        courseTimes.map { courseTime =>
+          s"${courseTime.startTime} - ${courseTime.endTime} (${courseTime.daysOffered.map(_.abbreviation).mkString})\n"
+        }.mkString
+      }.getOrElse(Seq(NoTimesString).mkString)
+
+    start + timeInfo
   }
 }
 

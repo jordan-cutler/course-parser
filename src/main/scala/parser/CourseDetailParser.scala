@@ -7,8 +7,6 @@ import util.matching._
 
 class CourseDetailParser(courseMatch: String) {
 
-  import CourseDetailParser._
-
   val courseDetailToCorrespondingDataMap = {
     val courseDetailMatches = CourseDetail.CourseDetailsPattern.findAllIn(courseMatch).toSeq
 
@@ -64,32 +62,25 @@ class CourseDetailParser(courseMatch: String) {
     }
   }
 
-  def getCourseTime: Option[CourseTime] = {
-    // Replace the parentheses in the string to make it easier to match
-    var replacedTimeLine: String = courseDetailToCorrespondingDataMap(CourseTimeDetail).replaceAll("[()]", "_")
-    // if there is a </p> tag in the time line, we cut it off at at the end of the </p> tag to prevent regexing the td that goes to the subsequent line
-    if (replacedTimeLine.indexOf("</p>") != -1) replacedTimeLine = replacedTimeLine.substring(0, replacedTimeLine.indexOf("</p>") + 4)
-    val (startTimeOpt, endTimeOpt, daysOpt) = replacedTimeLine match {
-      case CourseTimeDetail.TimeListedPattern(start, end, days) => (
-        Some(stringToCalendarObject(start)),
-        Some(stringToCalendarObject(end)),
-        Some(days.toCharArray.flatMap(Day.fromAbbreviation))
-      )
-      case CourseTimeDetail.TimeUnlistedPattern(_) => (None, None, None)
-    }
+  def getCourseTimes: Option[Seq[CourseTime]] = {
+    val timesLine = courseDetailToCorrespondingDataMap(CourseTimeDetail)
+    val timesMatches = CourseTimeDetail.TimeListedPattern.findAllIn(timesLine)
+    if (timesMatches.isEmpty) return None
 
-    for {
-      startTime <- startTimeOpt
-      endTime <- endTimeOpt
-      days <- daysOpt
-    } yield {
-      CourseTime(startTime, endTime, days)
-    }
+    Some(
+      timesMatches.map {
+        case CourseTimeDetail.TimeListedPattern(start, end, daysListed) => new CourseTime(
+          start,
+          end,
+          daysListed.toCharArray.flatMap(Day.fromAbbreviation)
+        )
+      }.toList
+    )
   }
 }
 
 object CourseDetailParser {
-  private def stringToCalendarObject(str: String): Calendar = {
+  private[parser] def stringToCalendarObject(str: String): Calendar = {
     val patt = "(\\d{1,2}):(\\d{2})([a-zA-Z]{2})".r
     val cal = Calendar.getInstance()
     var (hour, minute) = str match {

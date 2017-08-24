@@ -32,7 +32,7 @@ case object CourseTimeDetail extends CourseDetail {
   val index = 7
   // <td class='nowrap'><p>11:10am - 12:25pm (MF)</p>
   // </td>
-  val TimeListedPattern = "<td class='nowrap'><p>([a-z0-9:]+) - ([a-z0-9:]+) _([A-Z]+)_</p>".r
+  val TimeListedPattern = "<p>([a-z0-9:]+) - ([a-z0-9:]+) \\(([A-Z]+)\\)</p>".r
 
   // <td class='nowrap'>To Be Determined</td>
   val TimeUnlistedPattern = "<td(?s)(.*?)</td>".r
